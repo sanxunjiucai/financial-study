@@ -1,13 +1,20 @@
 @echo off
 setlocal
 
-REM 切换到 financial-study 仓库目录
+REM Change to financial-study repo directory
 cd /d d:\Study\CFP-Study-main\financial-study
 
-REM 将所有变更加入暂存区
+REM 1) Pull latest changes from remote first
+git pull --rebase origin main
+IF %ERRORLEVEL% NEQ 0 (
+    echo Git pull failed. Please resolve conflicts or check network, then rerun this script.
+    goto :EOF
+)
+
+REM 2) Stage all local changes
 git add .
 
-REM 如果有需要提交的变更才提交
+REM 3) Commit and push only if there are staged changes
 git diff --cached --quiet
 IF %ERRORLEVEL% NEQ 0 (
     set msg=Auto sync %date% %time%
@@ -18,4 +25,3 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 endlocal
-
